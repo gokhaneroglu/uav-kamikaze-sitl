@@ -1,63 +1,43 @@
-'from pathlib import Path; Path("README.md").write_text("""# UAV Kamikaze — SITL & HIL
+# Combat UAV Autonomous Guidance & Gazebo SITL Simulation 🛩️
 
-Autonomous UAV mission control and flight testing framework developed for fixed-wing unmanned aerial vehicle systems.
+[![ArduPilot](https://img.shields.io/badge/ArduPilot-Plane_SITL-red?style=flat&logo=ardupilot)](https://ardupilot.org/)
+[![Gazebo](https://img.shields.io/badge/Gazebo-Simulation-orange?style=flat&logo=gazebo)](http://gazebosim.org/)
+[![ROS 2](https://img.shields.io/badge/ROS_2-Humble-blue?style=flat&logo=ros)](https://docs.ros.org/)
+[![Blender](https://img.shields.io/badge/Blender-3D_Modeling-darkorange?style=flat&logo=blender)](https://www.blender.org/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-This repository contains Software-in-the-Loop (SITL) simulation studies and Hardware-in-the-Loop (HIL) flight testing software developed using ArduPilot, MAVLink and Python.
+Bu depo, **TEKNOFEST Savaşan İHA** yarışması senaryoları için geliştirilmiş; sabit kanatlı **Mini Talon V-Tail** hava araçlarının 6-DOF uçuş dinamiklerini, otonom güdüm/hedefleme algoritmalarını ve hava-hava/hava-yer muharebe senaryolarını test eden kapsamlı **Gazebo + ArduPilot SITL** simülasyon altyapısını içerir.
 
-## Overview
+---
 
-The project focuses on autonomous fixed-wing UAV mission execution, waypoint navigation, flight-mode management, guided flight operations and vision-assisted mission scenarios.
+### 🚀 Temel Mühendislik Yetkinlikleri
 
-The development workflow combines simulation-based validation with hardware-connected flight testing.
+* **Çift Platformlu (Dual-UAV) Simülasyon:** İki adet Mini Talon V-Tail sabit kanat İHA'nın eşzamanlı uçuş, formasyon ve it dalaşı (dogfight) senaryolarını destekleyen çoklu araç altyapısı (`vtail_runway.sdf`, `vtail_runway2.sdf`).
+* **GNSS Lock & Optik Takip Geçişi:** Rakip hava araçlarına önce GNSS telemetrisi üzerinden kilit atma, ardından burun kamerasına geçerek görüntü işleme tabanlı sürekli optik takibe geçiş sağlayan hibrit güdüm mimarisi.
+* **QR Kod Dalış & Kurtarma PID Kontrolü:** Yerdeki QR kod hedef plakalarına (`qr_code` 1-5) agresif açıyla dalış (kamikaze manevrası) yaparken uçağın sanal koridordan çıkmamasını sağlayan kapalı çevrim irtifa/açı PID kontrolü ve ani irtifa kurtarma (pull-up) dinamikleri.
+* **Dinamik No-Fly Zone (Yasaklı Alan Kaçınması):** Yarışma sahası sınırlarının ihlal edilmesini önleyen dinamik sanal sınır koruma ve çarpışma önleme algoritmaları.
+* **3D Çevre ve Parkur Modellemesi:** Yarışma pisti (`runway`), zemin sürtünme modelleri ve hedef plakaları Blender ortamında 1:1 ölçekli tasarlanarak Gazebo SDF formatına optimize edilmiştir.
+* **ArduPlane Parametre Kalibrasyonu:** Mini Talon V-Tail gövde geometrisi, aerodinamik kontrol yüzeyleri ve fırçasız (BLDC) motor itki sistemine özel optimize edilmiş `.param` yapılandırmaları.
 
-## System Architecture
+---
 
-### SITL — Software-in-the-Loop
-
-The `SITL/` directory contains simulation-oriented mission software.
-
-- Autonomous waypoint navigation
-- Route tracking
-- Mission state management
-- Guided mode transitions
-- Gazebo-based simulation
-- QR-based mission scenarios
-- Autonomous flight sequence testing
-
-### HIL — Hardware-in-the-Loop
-
-The `HIL/` directory contains software used with an NVIDIA Jetson platform and a real ArduPilot-based flight controller.
-
-- Jetson-to-flight-controller communication
-- MAVLink-based vehicle control
-- Autonomous mission execution
-- Waypoint navigation
-- Flight-mode management
-- Real hardware flight testing
-- Mission-state monitoring
-
-## Mission Flow
-
-1. Mission initialization
-2. Autonomous takeoff
-3. Waypoint-based route tracking
-4. Mission state monitoring
-5. Guided flight transition
-6. Vision-based mission processing
-7. Autonomous maneuver execution
-8. Mission completion and recovery
-
-## Repository Structure
+### 📂 Dizin Yapısı
 
 ```text
-uav-kamikaze-sitl/
-├── HIL/
-│   ├── g1.py
-│   ├── g2.py
-│   ├── g3.py
-│   └── g4.py
-├── SITL/
-│   ├── qr4.py
-│   ├── qr5.py
-│   └── qr6.py
+combat-uav-gazebo-sitl/
+├── gazebo/
+│   ├── models/
+│   │   ├── mini_talon_vtail/     # Birincil Mini Talon V-Tail modeli ve sensör eklentileri
+│   │   ├── mini_talon_vtail2/    # İkincil rakip/hedef İHA modeli
+│   │   ├── qr_code/ .. 5/        # Dalış ve görüntü işleme için yer hedef plakaları
+│   │   ├── runway/               # Kalkış ve iniş pisti 3D modeli
+│   │   └── sun/                  # Aydınlatma ve güneş konfigürasyonu
+│   └── worlds/
+│       ├── vtail_runway.sdf      # Tek araçlı görev ve pist simülasyon dünyası
+│       └── vtail_runway2.sdf     # Çift araçlı hava muharebesi simülasyon dünyası
+├── SITL_Models/
+│   └── Gazebo/
+│       └── config/
+│           ├── mini_talon_vtail.param   # 1. İHA ArduPlane kazanç ve uçuş parametreleri
+│           └── mini_talon_vtail2.param  # 2. İHA ArduPlane kazanç ve uçuş parametreleri
 └── README.md
